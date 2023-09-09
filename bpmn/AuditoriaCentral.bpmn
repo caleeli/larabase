@@ -1,0 +1,164 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://sourceforge.net/bpmn/definitions/_1680465458357" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:yaoqiang="http://bpmn.sourceforge.net" exporter="Yaoqiang BPMN Editor" exporterVersion="5.3" expressionLanguage="http://www.w3.org/1999/XPath" id="_1680465458357" name="" targetNamespace="http://sourceforge.net/bpmn/definitions/_1680465458357" typeLanguage="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://bpmn.sourceforge.net/schemas/BPMN20.xsd">
+  <message id="create_process" name="create_process"/>
+  <signal id="route" name="route"/>
+  <process id="AuditoriaCentral" isClosed="false" isExecutable="true" processType="Private">
+    <extensionElements>
+      <yaoqiang:description/>
+      <yaoqiang:pageFormat height="792.0" imageableHeight="782.0" imageableWidth="605.0" imageableX="5.0" imageableY="5.0" orientation="1" width="612.0"/>
+      <yaoqiang:page background="#FFFFFF" horizontalCount="1" verticalCount="1"/>
+    </extensionElements>
+    <userTask completionQuantity="1" id="_6" implementation="/AuditoriaCentral/Sucursales" isForCompensation="false" name="Datos de la Sucursal" startQuantity="1">
+      <extensionElements>
+        <yaoqiang:style align="center" whiteSpace="wrap"/>
+      </extensionElements>
+      <incoming>_3</incoming>
+      <incoming>_8</incoming>
+      <outgoing>_11</outgoing>
+      <humanPerformer id="_3_RES_1" name="user">
+        <resourceAssignmentExpression>
+          <formalExpression><![CDATA[Auth::id()]]></formalExpression>
+        </resourceAssignmentExpression>
+      </humanPerformer>
+    </userTask>
+    <scriptTask completionQuantity="1" id="_10" isForCompensation="false" name="Guardar proyecto" scriptFormat="application/x-php" startQuantity="1">
+      <extensionElements>
+        <yaoqiang:style whiteSpace="wrap"/>
+      </extensionElements>
+      <incoming>_11</incoming>
+      <outgoing>_13</outgoing>
+      <script><![CDATA[<?php
+use App\Models\Proyecto;
+
+if ($data['proyecto_id']) {
+	$proyecto = Proyecto::find($data['proyecto_id']);
+	$proyecto->update($data['proyecto']);
+} else {
+	$proyecto = Proyecto::create($data['proyecto']);
+}
+
+return [
+  'proyecto_id' => $proyecto->getKey(),
+  'proyecto' => $proyecto->toArray(),
+];]]></script>
+    </scriptTask>
+    <sequenceFlow id="_11" sourceRef="_6" targetRef="_10"/>
+    <userTask completionQuantity="1" id="_12" implementation="/AuditoriaCentral/Sucursales" isForCompensation="false" name="Datos de la Sucursal" startQuantity="1">
+      <extensionElements>
+        <yaoqiang:style whiteSpace="wrap"/>
+      </extensionElements>
+      <incoming>_13</incoming>
+    </userTask>
+    <sequenceFlow id="_13" sourceRef="_10" targetRef="_12"/>
+    <sequenceFlow id="_3" sourceRef="crearProyecto" targetRef="_6"/>
+    <startEvent id="crearProyecto" isInterrupting="true" name="Crear Proyecto de auditoria" parallelMultiple="false">
+      <extensionElements>
+        <yaoqiang:style whiteSpace="wrap"/>
+      </extensionElements>
+      <outgoing>_3</outgoing>
+      <outputSet/>
+    </startEvent>
+    <startEvent id="abrirProyecto" isInterrupting="true" name="Abrir" parallelMultiple="false">
+      <outgoing>_7</outgoing>
+      <outputSet/>
+    </startEvent>
+    <scriptTask completionQuantity="1" id="_5" isForCompensation="false" name="Cargar proyecto" scriptFormat="application/x-php" startQuantity="1">
+      <extensionElements>
+        <yaoqiang:style whiteSpace="wrap"/>
+      </extensionElements>
+      <incoming>_7</incoming>
+      <outgoing>_8</outgoing>
+      <script><![CDATA[<?php
+use App\Models\Proyecto;
+
+$proyecto = Proyecto::find($data['proyecto_id']);
+
+return [
+  'proyecto' => $proyecto->toArray(),
+];]]></script>
+    </scriptTask>
+    <sequenceFlow id="_7" sourceRef="abrirProyecto" targetRef="_5"/>
+    <sequenceFlow id="_8" sourceRef="_5" targetRef="_6"/>
+    <performer id="PROCESS_1_RES_1" name="identifier">
+      <resourceAssignmentExpression>
+        <formalExpression><![CDATA["Proyecto" . Auth::id()]]></formalExpression>
+      </resourceAssignmentExpression>
+    </performer>
+  </process>
+  <signal id="cancel" name="cancel"/>
+  <bpmndi:BPMNDiagram id="Yaoqiang_Diagram-AuditoriaCentral" name="Auditoria Central" resolution="96.0">
+    <bpmndi:BPMNPlane bpmnElement="AuditoriaCentral">
+      <bpmndi:BPMNShape bpmnElement="_6" id="Yaoqiang-_6">
+        <dc:Bounds height="55.0" width="85.0" x="200.43063277046406" y="81.95087339592996"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.8" width="71.0" x="207.43" y="95.05"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_10" id="Yaoqiang-_10">
+        <dc:Bounds height="55.0" width="85.0" x="352.0221791927123" y="81.95087339592996"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.8" width="55.0" x="367.02" y="95.05"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_12" id="Yaoqiang-_12">
+        <dc:Bounds height="55.0" width="85.0" x="354.0169243182726" y="198.5"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.8" width="71.0" x="361.02" y="211.6"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="crearProyecto" id="Yaoqiang-crearProyecto">
+        <dc:Bounds height="32.0" width="32.0" x="110.0" y="93.45087339592996"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.8" width="91.0" x="80.5" y="128.56"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_5" id="Yaoqiang-_5">
+        <dc:Bounds height="55.0" width="85.0" x="200.5" y="198.5"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.8" width="55.0" x="215.5" y="211.6"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="abrirProyecto" id="Yaoqiang-abrirProyecto">
+        <dc:Bounds height="32.0" width="32.0" x="110.0" y="210.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="33.0" x="109.5" y="250.68"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="_13" id="Yaoqiang-_13">
+        <di:waypoint x="395.51955175549244" y="137.0"/>
+        <di:waypoint x="395.51955175549244" y="199.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="392.52" y="158.6"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_11" id="Yaoqiang-_11">
+        <di:waypoint x="285.0" y="109.45087339592996"/>
+        <di:waypoint x="352.0" y="109.45087339592996"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="315.5" y="100.05"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_8" id="Yaoqiang-_8">
+        <di:waypoint x="242.96531638523203" y="199.0"/>
+        <di:waypoint x="242.96531638523203" y="137.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="239.97" y="158.6"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_7" id="Yaoqiang-_7">
+        <di:waypoint x="142.0" y="226.0"/>
+        <di:waypoint x="201.0" y="226.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="168.5" y="216.6"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_3" id="Yaoqiang-_3">
+        <di:waypoint x="141.99364602524523" y="109.45087339592996"/>
+        <di:waypoint x="200.0" y="109.45087339592996"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="168.0" y="100.05"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

@@ -1,0 +1,889 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:auditoria="http://example.com/auditoria" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://sourceforge.net/bpmn/definitions/_1680465458357" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:yaoqiang="http://bpmn.sourceforge.net" exporter="Yaoqiang BPMN Editor" exporterVersion="5.3" expressionLanguage="http://www.w3.org/1999/XPath" id="_1680465458357" name="" targetNamespace="http://sourceforge.net/bpmn/definitions/_1680465458357" typeLanguage="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://bpmn.sourceforge.net/schemas/BPMN20.xsd">
+  <import importType="http://www.w3.org/2001/XMLSchema" location="./AuditoriaModels.xsd" namespace="http://example.com/auditoria"/>
+  <itemDefinition id="Proyecto" isCollection="false" itemKind="Information" structureRef="auditoria:Proyecto"/>
+  <message id="create_process" name="create_process"/>
+  <signal id="route" name="route"/>
+  <signal id="cancel" name="cancel"/>
+  <collaboration id="COLLABORATION_1" isClosed="false">
+    <extensionElements>
+      <yaoqiang:description/>
+      <yaoqiang:pageFormat height="1224.0" imageableHeight="1214.0" imageableWidth="785.0" imageableX="5.0" imageableY="5.0" orientation="1" width="792.0"/>
+      <yaoqiang:page background="#FFFFFF" horizontalCount="1" verticalCount="1"/>
+    </extensionElements>
+    <participant id="_28" name="Proyecto Auditoria" processRef="PROCESS_2">
+      <participantMultiplicity maximum="1" minimum="0"/>
+    </participant>
+  </collaboration>
+  <process id="PROCESS_2" isClosed="false" isExecutable="true" name="Proyecto Auditoria" processType="None">
+    <ioSpecification>
+      <dataOutput id="_9" isCollection="false" itemSubjectRef="Proyecto" name="proyecto"/>
+      <inputSet/>
+      <outputSet>
+        <dataOutputRefs>_9</dataOutputRefs>
+      </outputSet>
+    </ioSpecification>
+    <laneSet>
+      <lane id="_29" name="Auditor"/>
+      <lane id="_30" name="Supervisor">
+        <flowNodeRef>_5</flowNodeRef>
+        <flowNodeRef>_12</flowNodeRef>
+        <flowNodeRef>_6</flowNodeRef>
+        <flowNodeRef>_20</flowNodeRef>
+        <flowNodeRef>_17</flowNodeRef>
+        <flowNodeRef>crearProyecto</flowNodeRef>
+        <flowNodeRef>abrirProyecto</flowNodeRef>
+        <flowNodeRef>_13</flowNodeRef>
+        <flowNodeRef>_24</flowNodeRef>
+        <flowNodeRef>_26</flowNodeRef>
+        <flowNodeRef>_35</flowNodeRef>
+        <flowNodeRef>_38</flowNodeRef>
+        <flowNodeRef>_41</flowNodeRef>
+        <flowNodeRef>_39</flowNodeRef>
+        <flowNodeRef>_45</flowNodeRef>
+        <flowNodeRef>_14</flowNodeRef>
+      </lane>
+      <lane id="_31" name="Gerente">
+        <flowNodeRef>_3</flowNodeRef>
+        <flowNodeRef>_32</flowNodeRef>
+        <flowNodeRef>_16</flowNodeRef>
+        <flowNodeRef>_49</flowNodeRef>
+        <flowNodeRef>_53</flowNodeRef>
+        <flowNodeRef>_23</flowNodeRef>
+        <flowNodeRef>_57</flowNodeRef>
+      </lane>
+    </laneSet>
+    <scriptTask completionQuantity="1" id="_5" isForCompensation="false" name="Cargar proyecto" scriptFormat="application/x-php" startQuantity="1">
+      <extensionElements>
+        <yaoqiang:style fillColor="#2FFF00" whiteSpace="wrap"/>
+      </extensionElements>
+      <incoming>_7</incoming>
+      <incoming>_47</incoming>
+      <outgoing>_8</outgoing>
+      <script><![CDATA[<?php
+use App\Models\Proyecto;
+
+$id = $data['proyecto_id'] ?? $data['proyecto']['id'];
+
+$proyecto = Proyecto::find($id);
+$proyecto->agenciasIds;
+$proyecto->sucursalesIds;
+$proyecto->tipoAuditoria;
+
+return [
+	'proyecto_id' => $id,
+	'proyecto' => $proyecto->toArray(),
+	'encargadoProyecto' => $proyecto->creador?->nombres_apellidos,
+];]]></script>
+    </scriptTask>
+    <userTask completionQuantity="1" id="_12" implementation="4CargarPlanif5" isForCompensation="false" name="Cargar Planificación y Programa" startQuantity="1">
+      <extensionElements>
+        <yaoqiang:style fillColor="#FFA600" whiteSpace="wrap"/>
+      </extensionElements>
+      <incoming>_2</incoming>
+      <incoming>_19</incoming>
+      <incoming>_59</incoming>
+      <outgoing>_4</outgoing>
+    </userTask>
+    <userTask completionQuantity="1" id="_6" implementation="3AudiCheckBox6" isForCompensation="false" name="Datos de la Sucursal" startQuantity="1">
+      <extensionElements>
+        <yaoqiang:style align="center" fillColor="#2FFF00" whiteSpace="wrap"/>
+      </extensionElements>
+      <incoming>_21</incoming>
+      <outgoing>_2</outgoing>
+      <ioSpecification>
+        <inputSet/>
+        <outputSet/>
+      </ioSpecification>
+    </userTask>
+    <sequenceFlow id="_7" sourceRef="abrirProyecto" targetRef="_5"/>
+    <sequenceFlow id="_33" sourceRef="_3" targetRef="_32"/>
+    <sequenceFlow id="_34" sourceRef="_32" targetRef="_24"/>
+    <sequenceFlow id="_2" sourceRef="_6" targetRef="_12"/>
+    <sequenceFlow id="_4" sourceRef="_12" targetRef="_57"/>
+    <scriptTask completionQuantity="1" id="_20" isForCompensation="false" name="Inicializar" scriptFormat="application/x-php" startQuantity="1">
+      <extensionElements>
+        <yaoqiang:style fillColor="#2FFF00" whiteSpace="wrap"/>
+      </extensionElements>
+      <incoming>_10</incoming>
+      <outgoing>_11</outgoing>
+      <script><![CDATA[<?php
+use App\Models\Proyecto;
+use Illuminate\Support\Facades\Auth;
+
+$proyecto = Proyecto::make([]);
+$proyecto->responsable_id = Auth::user()->getKey();
+$proyecto->gestion_id = intval(date('Y'));
+$proyecto->tipoAuditoria;
+
+return [
+  'proyecto' => $proyecto->toArray(),
+  'encargadoProyecto' => Auth::user()->nombres_apellidos,
+];]]></script>
+    </scriptTask>
+    <userTask completionQuantity="1" id="_17" implementation="/Auditoria/2ProyAudDescrip" isForCompensation="false" name="Datos del Proyecto" startQuantity="1">
+      <extensionElements>
+        <yaoqiang:style align="center" fillColor="#2FFF00" whiteSpace="wrap"/>
+      </extensionElements>
+      <incoming>_11</incoming>
+      <outgoing>_47</outgoing>
+      <ioSpecification>
+        <inputSet/>
+        <outputSet/>
+      </ioSpecification>
+    </userTask>
+    <sequenceFlow id="_10" sourceRef="crearProyecto" targetRef="_20"/>
+    <sequenceFlow id="_11" sourceRef="_20" targetRef="_17"/>
+    <startEvent id="crearProyecto" isInterrupting="true" name="Crear Proyecto" parallelMultiple="false">
+      <extensionElements>
+        <yaoqiang:style whiteSpace="wrap"/>
+      </extensionElements>
+      <outgoing>_10</outgoing>
+      <outputSet/>
+    </startEvent>
+    <startEvent id="abrirProyecto" isInterrupting="true" name="Abrir" parallelMultiple="false">
+      <outgoing>_7</outgoing>
+      <outputSet/>
+    </startEvent>
+    <sequenceFlow id="_19" name="of.Central" sourceRef="_14" targetRef="_12">
+      <extensionElements>
+        <yaoqiang:label offset-x="0.0" offset-y="-67.0" x="0.0" y="1.0"/>
+        <yaoqiang:style noLabel="1"/>
+      </extensionElements>
+      <conditionExpression><![CDATA[$proyecto['tipo_auditoria_id'] == 1]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_21" sourceRef="_14" targetRef="_6"/>
+    <sequenceFlow id="_8" sourceRef="_5" targetRef="_14"/>
+    <userTask completionQuantity="1" id="_3" implementation="5RevisionDocumentos2" isForCompensation="false" name="Revisión de documentos" startQuantity="1">
+      <extensionElements>
+        <yaoqiang:style fillColor="#FFA600"/>
+      </extensionElements>
+      <incoming>_25</incoming>
+      <incoming>_60</incoming>
+      <outgoing>_33</outgoing>
+      <humanPerformer id="_3_RES_1" name="user">
+        <resourceAssignmentExpression>
+          <formalExpression><![CDATA[<?php
+use App\Models\Usuario;
+$gerente = Usuario::gerente()->first();
+return $gerente->getKey();]]></formalExpression>
+        </resourceAssignmentExpression>
+      </humanPerformer>
+      <humanPerformer id="_3_RES_2" name="notification">
+        <resourceAssignmentExpression>
+          <formalExpression><![CDATA[<?php
+
+return "Tiene un documento para revisar";]]></formalExpression>
+        </resourceAssignmentExpression>
+      </humanPerformer>
+    </userTask>
+    <exclusiveGateway default="_34" gatewayDirection="Diverging" id="_32" name="Aprueba Plan">
+      <incoming>_33</incoming>
+      <outgoing>_34</outgoing>
+      <outgoing>_22</outgoing>
+    </exclusiveGateway>
+    <userTask completionQuantity="1" id="_13" implementation="7.0CargarDocFirmado6" isForCompensation="false" name="Cargar documentos firmados" startQuantity="1">
+      <extensionElements>
+        <yaoqiang:style fillColor="#FFA600" whiteSpace="wrap"/>
+      </extensionElements>
+      <incoming>_22</incoming>
+      <outgoing>_27</outgoing>
+      <humanPerformer id="_13_RES_1" name="user">
+        <resourceAssignmentExpression>
+          <formalExpression><![CDATA[<?php
+
+return $data['proyecto']['responsable_id'];]]></formalExpression>
+        </resourceAssignmentExpression>
+      </humanPerformer>
+    </userTask>
+    <sequenceFlow id="_22" sourceRef="_32" targetRef="_13">
+      <conditionExpression><![CDATA[$aprobacion_documentos]]></conditionExpression>
+    </sequenceFlow>
+    <userTask completionQuantity="1" id="_24" implementation="6SupervisorCorrige4" isForCompensation="false" name="Corrección de observaciones" startQuantity="1">
+      <extensionElements>
+        <yaoqiang:style fillColor="#FFA600" whiteSpace="wrap"/>
+      </extensionElements>
+      <incoming>_34</incoming>
+      <outgoing>_25</outgoing>
+      <humanPerformer id="_24_RES_1" name="user">
+        <resourceAssignmentExpression>
+          <formalExpression><![CDATA[<?php
+
+return $data['proyecto']['responsable_id'];]]></formalExpression>
+        </resourceAssignmentExpression>
+      </humanPerformer>
+      <humanPerformer id="_24_RES_2" name="notification">
+        <resourceAssignmentExpression>
+          <formalExpression><![CDATA[<?php
+
+return "Debe revisar un documento devuelto";]]></formalExpression>
+        </resourceAssignmentExpression>
+      </humanPerformer>
+    </userTask>
+    <sequenceFlow id="_25" sourceRef="_24" targetRef="_3"/>
+    <userTask completionQuantity="1" id="_26" implementation="8CargarMuestras" isForCompensation="false" name="Cargado de muestras" startQuantity="1">
+      <extensionElements>
+        <yaoqiang:style fillColor="#FFA600" whiteSpace="wrap"/>
+      </extensionElements>
+      <incoming>_27</incoming>
+      <incoming>_48</incoming>
+      <outgoing>_44</outgoing>
+      <humanPerformer id="_26_RES_1" name="user">
+        <resourceAssignmentExpression>
+          <formalExpression><![CDATA[<?php
+
+return $data['proyecto']['responsable_id'];]]></formalExpression>
+        </resourceAssignmentExpression>
+      </humanPerformer>
+    </userTask>
+    <sequenceFlow id="_27" sourceRef="_13" targetRef="_26"/>
+    <userTask completionQuantity="1" id="_35" implementation="9CargarRequerimiento" isForCompensation="false" name="Cargar requerimiento de información" startQuantity="1">
+      <extensionElements>
+        <yaoqiang:style fillColor="#FFA600" whiteSpace="wrap"/>
+      </extensionElements>
+      <incoming>_36</incoming>
+      <incoming>_52</incoming>
+      <outgoing>_18</outgoing>
+      <humanPerformer id="_35_RES_1" name="user">
+        <resourceAssignmentExpression>
+          <formalExpression><![CDATA[<?php
+
+return $data['proyecto']['responsable_id'];]]></formalExpression>
+        </resourceAssignmentExpression>
+      </humanPerformer>
+    </userTask>
+    <sequenceFlow id="_36" sourceRef="_39" targetRef="_35"/>
+    <userTask completionQuantity="1" id="_16" implementation="10RevisionRequerimiento" isForCompensation="false" name="Revision de requerimiento" startQuantity="1">
+      <extensionElements>
+        <yaoqiang:style fillColor="#FFA600" whiteSpace="wrap"/>
+      </extensionElements>
+      <incoming>_50</incoming>
+      <incoming>_56</incoming>
+      <outgoing>_37</outgoing>
+      <humanPerformer id="_16_RES_1" name="user">
+        <resourceAssignmentExpression>
+          <formalExpression><![CDATA[<?php
+use App\Models\Usuario;
+$gerente = Usuario::gerente()->first();
+return $gerente->getKey();]]></formalExpression>
+        </resourceAssignmentExpression>
+      </humanPerformer>
+    </userTask>
+    <sequenceFlow id="_18" sourceRef="_35" targetRef="_49"/>
+    <sequenceFlow id="_37" sourceRef="_16" targetRef="_23"/>
+    <userTask completionQuantity="1" id="_38" implementation="11.0AsignaAuditores" isForCompensation="false" name="Asignar auditores" startQuantity="1">
+      <extensionElements>
+        <yaoqiang:style fillColor="#FFA600" whiteSpace="wrap"/>
+      </extensionElements>
+      <incoming>_40</incoming>
+      <outgoing>_46</outgoing>
+      <humanPerformer id="_38_RES_1" name="user">
+        <resourceAssignmentExpression>
+          <formalExpression><![CDATA[<?php
+
+return $data['proyecto']['responsable_id'];]]></formalExpression>
+        </resourceAssignmentExpression>
+      </humanPerformer>
+    </userTask>
+    <sequenceFlow id="_40" sourceRef="_23" targetRef="_38">
+      <extensionElements>
+        <yaoqiang:label offset-x="-20.0" offset-y="0.0" x="0.0" y="11.0"/>
+      </extensionElements>
+      <conditionExpression><![CDATA[$aprobacion_requerimientos]]></conditionExpression>
+    </sequenceFlow>
+    <userTask completionQuantity="1" id="_41" implementation="10RevisionRequerimiento2" isForCompensation="false" name="Correccion requerimiento de   informacion" startQuantity="1">
+      <extensionElements>
+        <yaoqiang:style fillColor="#FFA600" whiteSpace="wrap"/>
+      </extensionElements>
+      <incoming>_42</incoming>
+      <incoming>_55</incoming>
+      <outgoing>_43</outgoing>
+      <humanPerformer id="_41_RES_1" name="user">
+        <resourceAssignmentExpression>
+          <formalExpression><![CDATA[<?php
+
+return $data['proyecto']['responsable_id'];]]></formalExpression>
+        </resourceAssignmentExpression>
+      </humanPerformer>
+    </userTask>
+    <sequenceFlow id="_42" sourceRef="_23" targetRef="_41"/>
+    <sequenceFlow id="_43" sourceRef="_41" targetRef="_53"/>
+    <scriptTask completionQuantity="1" id="_39" isForCompensation="false" name="Cargar Muestra a BD" scriptFormat="application/x-php" startQuantity="1">
+      <extensionElements>
+        <yaoqiang:style fillColor="#FFA600" whiteSpace="wrap"/>
+      </extensionElements>
+      <incoming>_44</incoming>
+      <outgoing>_36</outgoing>
+      <script><![CDATA[<?php
+use App\Models\Proyecto;
+
+$proyecto = Proyecto::find($data['proyecto']['id']);
+$proyecto->cargarMuestras();
+
+return [
+	'proyecto' => $proyecto->toArray(),
+];]]></script>
+    </scriptTask>
+    <sequenceFlow id="_44" sourceRef="_26" targetRef="_39"/>
+    <userTask completionQuantity="1" id="_45" implementation="13RegProgramaTrabajo5" isForCompensation="false" name="Revision del Auditor" startQuantity="1">
+      <extensionElements>
+        <yaoqiang:style fillColor="#0091FF" whiteSpace="wrap"/>
+      </extensionElements>
+      <incoming>_46</incoming>
+      <humanPerformer id="_45_RES_1" name="user">
+        <resourceAssignmentExpression>
+          <formalExpression><![CDATA[<?php
+
+$performers = [];
+
+$supervisor = $data['proyecto']['responsable_id'];
+$performers[$supervisor] = $supervisor;
+
+foreach($data['proyecto']['muestra'] as $tarea) {
+	$asignado = $tarea['asignado_id'];
+	if ($asignado) {
+    $performers[$asignado] = $asignado;
+  }
+}
+
+return array_values($performers);]]></formalExpression>
+        </resourceAssignmentExpression>
+      </humanPerformer>
+    </userTask>
+    <sequenceFlow id="_46" sourceRef="_38" targetRef="_45"/>
+    <exclusiveGateway default="_21" gatewayDirection="Diverging" id="_14" name="of. central?">
+      <incoming>_8</incoming>
+      <outgoing>_19</outgoing>
+      <outgoing>_21</outgoing>
+    </exclusiveGateway>
+    <sequenceFlow id="_47" sourceRef="_17" targetRef="_5"/>
+    <boundaryEvent attachedToRef="_39" cancelActivity="true" id="_15" name="Boundary Event" parallelMultiple="false">
+      <extensionElements>
+        <yaoqiang:style align="right" labelPosition="left" verticalAlign="middle" verticalLabelPosition="top"/>
+        <yaoqiang:label offset-x="47.0" offset-y="-16.0" x="0.0" y="0.0"/>
+      </extensionElements>
+      <outgoing>_48</outgoing>
+      <outputSet/>
+      <errorEventDefinition id="_15_ED_1"/>
+    </boundaryEvent>
+    <sequenceFlow id="_48" sourceRef="_15" targetRef="_26"/>
+    <scriptTask completionQuantity="1" id="_49" isForCompensation="false" name="Cargar Requerimientos a DB" scriptFormat="application/x-php" startQuantity="1">
+      <extensionElements>
+        <yaoqiang:style fillColor="#FF9900" whiteSpace="wrap"/>
+      </extensionElements>
+      <incoming>_18</incoming>
+      <outgoing>_50</outgoing>
+      <script><![CDATA[<?php
+use App\Models\Proyecto;
+
+$proyecto = Proyecto::find($data['proyecto']['id']);
+$proyecto->cargarRequerimientos();
+
+return [
+	'proyecto' => $proyecto->toArray(),
+];]]></script>
+    </scriptTask>
+    <boundaryEvent attachedToRef="_49" cancelActivity="true" id="_51" parallelMultiple="false">
+      <extensionElements>
+        <yaoqiang:style align="right" labelPosition="left" verticalAlign="middle" verticalLabelPosition="top"/>
+        <yaoqiang:label offset-x="-16.0" offset-y="15.0" x="0.0" y="0.0"/>
+      </extensionElements>
+      <outgoing>_52</outgoing>
+      <outputSet/>
+      <errorEventDefinition id="_51_ED_1"/>
+    </boundaryEvent>
+    <sequenceFlow id="_50" sourceRef="_49" targetRef="_16"/>
+    <sequenceFlow id="_52" sourceRef="_51" targetRef="_35"/>
+    <scriptTask completionQuantity="1" id="_53" isForCompensation="false" name="Cargar Requerimientos a DB" scriptFormat="application/x-php" startQuantity="1">
+      <extensionElements>
+        <yaoqiang:style fillColor="#FF9900" whiteSpace="wrap"/>
+      </extensionElements>
+      <incoming>_43</incoming>
+      <outgoing>_56</outgoing>
+      <script><![CDATA[<?php
+use App\Models\Proyecto;
+
+$proyecto = Proyecto::find($data['proyecto']['id']);
+$proyecto->cargarRequerimientos();
+
+return [
+	'proyecto' => $proyecto->toArray(),
+];]]></script>
+    </scriptTask>
+    <boundaryEvent attachedToRef="_53" cancelActivity="true" id="_54" parallelMultiple="false">
+      <extensionElements>
+        <yaoqiang:style align="right" labelPosition="left" verticalAlign="middle" verticalLabelPosition="top"/>
+        <yaoqiang:label offset-x="13.0" offset-y="-16.0" x="0.0" y="1.0"/>
+      </extensionElements>
+      <outgoing>_55</outgoing>
+      <outputSet/>
+      <errorEventDefinition id="_54_ED_1"/>
+    </boundaryEvent>
+    <sequenceFlow id="_55" sourceRef="_54" targetRef="_41"/>
+    <sequenceFlow id="_56" sourceRef="_53" targetRef="_16"/>
+    <exclusiveGateway default="_42" gatewayDirection="Diverging" id="_23" name="Aprueba requerimientosss">
+      <incoming>_37</incoming>
+      <outgoing>_40</outgoing>
+      <outgoing>_42</outgoing>
+    </exclusiveGateway>
+    <scriptTask completionQuantity="1" id="_57" isForCompensation="false" name="Cargar Programa" scriptFormat="application/x-php" startQuantity="1">
+      <extensionElements>
+        <yaoqiang:style fillColor="#FFAF00" whiteSpace="wrap"/>
+      </extensionElements>
+      <incoming>_4</incoming>
+      <outgoing>_60</outgoing>
+      <script><![CDATA[<?php
+use App\Models\Proyecto;
+
+$proyecto = Proyecto::find($data['proyecto']['id']);
+$proyecto->cargarPrograma();
+
+return [
+	'proyecto' => $proyecto->toArray(),
+];]]></script>
+    </scriptTask>
+    <boundaryEvent attachedToRef="_57" cancelActivity="true" id="_58" parallelMultiple="false">
+      <extensionElements>
+        <yaoqiang:style align="right" labelPosition="left" verticalAlign="middle" verticalLabelPosition="top"/>
+        <yaoqiang:label offset-x="38.819370165748296" offset-y="-16.0" x="0.0" y="0.0"/>
+      </extensionElements>
+      <outgoing>_59</outgoing>
+      <outputSet/>
+      <errorEventDefinition id="_58_ED_1"/>
+    </boundaryEvent>
+    <sequenceFlow id="_59" sourceRef="_58" targetRef="_12"/>
+    <sequenceFlow id="_60" sourceRef="_57" targetRef="_3"/>
+    <performer id="PROCESS_2_RES_1" name="identifier">
+      <resourceAssignmentExpression>
+        <formalExpression><![CDATA[<?php
+if (isset($data['proyecto']) && isset($data['proyecto']['id'])) {
+	return "Proyecto" . $data['proyecto']['id'];
+} elseif (isset($data['proyecto_id'])) {
+	return "Proyecto" . $data['proyecto_id'];
+} else {
+	return "_NuevoProyecto" . Auth::id();
+}]]></formalExpression>
+      </resourceAssignmentExpression>
+    </performer>
+    <performer id="PROCESS_2_RES_2" name="home">
+      <resourceAssignmentExpression>
+        <formalExpression><![CDATA["/Auditoria/1PantallaBDAuditoria3"]]></formalExpression>
+      </resourceAssignmentExpression>
+    </performer>
+  </process>
+  <bpmndi:BPMNDiagram id="Yaoqiang_Diagram-COLLABORATION_1" name="Auditoria Central" resolution="96.0">
+    <bpmndi:BPMNPlane bpmnElement="COLLABORATION_1">
+      <bpmndi:BPMNShape bpmnElement="_28" id="Yaoqiang-_28" isExpanded="true" isHorizontal="false">
+        <dc:Bounds height="1196.0" width="784.0" x="113.0" y="50.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="22.3" width="153.0" x="428.5" y="56.35"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_9" id="Yaoqiang-_9">
+        <dc:Bounds height="38.0" width="29.0" x="314.5" y="660.8612976074219"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="55.0" x="301.5" y="700.86"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_29" id="Yaoqiang-_29" isExpanded="true" isHorizontal="false">
+        <dc:Bounds height="1171.0" width="213.0" x="113.0" y="75.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="22.3" width="64.0" x="187.5" y="81.35"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_30" id="Yaoqiang-_30" isExpanded="true" isHorizontal="false">
+        <dc:Bounds height="1171.0" width="314.0" x="326.0" y="75.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="22.3" width="92.0" x="437.0" y="81.35"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_31" id="Yaoqiang-_31" isExpanded="true" isHorizontal="false">
+        <dc:Bounds height="1171.0" width="257.0" x="640.0" y="75.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="22.3" width="71.0" x="733.0" y="81.35"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_5" id="Yaoqiang-_5">
+        <dc:Bounds height="55.0" width="85.0" x="411.4515938372009" y="309.8837328582225"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.8" width="55.0" x="426.45" y="322.98"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_12" id="Yaoqiang-_12">
+        <dc:Bounds height="55.0" width="85.0" x="411.4515938372009" y="509.1337328582225"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="46.8" width="76.0" x="415.95" y="515.23"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_6" id="Yaoqiang-_6">
+        <dc:Bounds height="55.0" width="85.0" x="411.4515938372009" y="410.6337328582225"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.8" width="71.0" x="418.45" y="423.73"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_20" id="Yaoqiang-_20">
+        <dc:Bounds height="55.0" width="85.0" x="413.65460526315786" y="120.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="58.0" x="427.15" y="140.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_17" id="Yaoqiang-_17">
+        <dc:Bounds height="55.0" width="85.0" x="412.5592105263157" y="211.92105263157896"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.8" width="60.0" x="425.06" y="225.02"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="crearProyecto" id="Yaoqiang-crearProyecto">
+        <dc:Bounds height="32.0" width="32.0" x="340.9515938372009" y="132.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="91.0" x="311.45" y="176.23"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="abrirProyecto" id="Yaoqiang-abrirProyecto">
+        <dc:Bounds height="32.0" width="32.0" x="340.9515938372009" y="321.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="33.0" x="340.45" y="364.8"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_13" id="Yaoqiang-_13">
+        <dc:Bounds height="55.0" width="85.0" x="412.5" y="746.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="46.8" width="76.0" x="417.0" y="752.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_24" id="Yaoqiang-_24">
+        <dc:Bounds height="55.0" width="85.0" x="412.5" y="602.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="60.8" width="75.0" x="417.5" y="601.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_26" id="Yaoqiang-_26">
+        <dc:Bounds height="55.0" width="85.0" x="412.5" y="846.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.8" width="72.0" x="419.0" y="859.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_35" id="Yaoqiang-_35">
+        <dc:Bounds height="55.0" width="85.0" x="412.5" y="926.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="60.8" width="75.0" x="417.5" y="925.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_38" id="Yaoqiang-_38">
+        <dc:Bounds height="55.0" width="85.0" x="415.0" y="1061.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.8" width="60.0" x="427.5" y="1074.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_41" id="Yaoqiang-_41">
+        <dc:Bounds height="55.0" width="85.0" x="525.0" y="1008.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="60.8" width="75.0" x="530.0" y="1007.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_39" id="Yaoqiang-_39">
+        <dc:Bounds height="65.0" width="95.0" x="526.0" y="841.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.8" width="83.0" x="532.0" y="859.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_45" id="Yaoqiang-_45">
+        <dc:Bounds height="55.0" width="85.0" x="415.0" y="1145.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.8" width="74.0" x="420.5" y="1158.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_14" id="Yaoqiang-_14" isMarkerVisible="true">
+        <dc:Bounds height="42.0" width="42.0" x="580.4230769230769" y="368.03846153846143"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="70.0" x="566.42" y="412.04"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_15" id="Yaoqiang-_15">
+        <dc:Bounds height="32.0" width="32.0" x="573.0" y="825.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="95.0" x="478.0" y="801.6"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_3" id="Yaoqiang-_3">
+        <dc:Bounds height="55.0" width="85.0" x="671.0" y="601.8837328582225"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.8" width="76.0" x="675.5" y="614.98"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_32" id="Yaoqiang-_32" isMarkerVisible="true">
+        <dc:Bounds height="42.0" width="42.0" x="695.0" y="689.3837328582225"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="81.0" x="675.5" y="733.38"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_16" id="Yaoqiang-_16">
+        <dc:Bounds height="55.0" width="85.0" x="796.0" y="953.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="46.8" width="75.0" x="801.0" y="959.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_49" id="Yaoqiang-_49">
+        <dc:Bounds height="55.0" width="85.0" x="671.0" y="862.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="46.8" width="77.0" x="675.0" y="868.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_53" id="Yaoqiang-_53">
+        <dc:Bounds height="55.0" width="85.0" x="691.0" y="958.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="46.8" width="77.0" x="695.0" y="964.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_23" id="Yaoqiang-_23" isMarkerVisible="true">
+        <dc:Bounds height="42.0" width="42.0" x="821.0" y="1028.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="158.0" x="763.0" y="1072.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_57" id="Yaoqiang-_57">
+        <dc:Bounds height="65.0" width="95.0" x="673.0520891345833" y="495.7748066299323"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.8" width="62.0" x="689.55" y="513.87"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_51" id="Yaoqiang-_51">
+        <dc:Bounds height="32.0" width="32.0" x="655.0" y="877.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="649.0" y="853.6"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_54" id="Yaoqiang-_54">
+        <dc:Bounds height="32.0" width="32.0" x="704.0" y="997.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="698.0" y="973.6"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_58" id="Yaoqiang-_58">
+        <dc:Bounds height="32.0" width="32.0" x="711.8714593003316" y="479.7748066299323"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="705.87" y="456.37"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="_59" id="Yaoqiang-_59">
+        <di:waypoint x="712.0015848301753" y="495.7748066299323"/>
+        <di:waypoint x="568.3254106815083" y="517.9025546962316"/>
+        <di:waypoint x="496.0" y="517.9025546962316"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="589.94" y="486.37"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_27" id="Yaoqiang-_27">
+        <di:waypoint x="455.0" y="801.0"/>
+        <di:waypoint x="455.0" y="846.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="452.0" y="814.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_25" id="Yaoqiang-_25">
+        <di:waypoint x="498.0" y="629.5"/>
+        <di:waypoint x="671.0" y="629.3837328582225"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="581.44" y="619.98"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_56" id="Yaoqiang-_56">
+        <di:waypoint x="776.0" y="985.5"/>
+        <di:waypoint x="796.0" y="980.5"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="783.0" y="973.6"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_55" id="Yaoqiang-_55">
+        <di:waypoint x="719.0" y="1028.9687194226713"/>
+        <di:waypoint x="719.0" y="1033.0"/>
+        <di:waypoint x="610.0" y="1033.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="663.52" y="1023.6"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_22" id="Yaoqiang-_22">
+        <di:waypoint x="695.3837328582225" y="710.3837328582225"/>
+        <di:waypoint x="637.0" y="739.0"/>
+        <di:waypoint x="498.0" y="773.5"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="152.0" x="552.25" y="764.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_21" id="Yaoqiang-_21">
+        <di:waypoint x="581.0" y="390.0"/>
+        <di:waypoint x="525.0" y="390.0"/>
+        <di:waypoint x="496.0" y="438.1337328582225"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="522.0" y="391.16"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_52" id="Yaoqiang-_52">
+        <di:waypoint x="655.0" y="893.0"/>
+        <di:waypoint x="647.0" y="920.0"/>
+        <di:waypoint x="498.0" y="953.5"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="603.75" y="944.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_50" id="Yaoqiang-_50">
+        <di:waypoint x="756.0" y="889.5"/>
+        <di:waypoint x="842.0" y="931.0"/>
+        <di:waypoint x="842.0" y="953.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="827.75" y="880.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_8" id="Yaoqiang-_8">
+        <di:waypoint x="496.0" y="322.0"/>
+        <di:waypoint x="602.0" y="322.0"/>
+        <di:waypoint x="602.0" y="369.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="569.5" y="312.6"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_19" id="Yaoqiang-_19">
+        <di:waypoint x="600.0" y="409.0"/>
+        <di:waypoint x="600.0" y="479.0"/>
+        <di:waypoint x="496.0" y="536.6337328582225"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="598.0" y="448.41"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_18" id="Yaoqiang-_18">
+        <di:waypoint x="498.0" y="961.0"/>
+        <di:waypoint x="687.0" y="961.0"/>
+        <di:waypoint x="687.0" y="917.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="611.5" y="951.6"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_7" id="Yaoqiang-_7">
+        <di:waypoint x="373.0" y="337.0"/>
+        <di:waypoint x="411.0" y="337.3837328582225"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="389.19" y="327.6"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_48" id="Yaoqiang-_48">
+        <di:waypoint x="589.0" y="825.0"/>
+        <di:waypoint x="484.0" y="822.0"/>
+        <di:waypoint x="484.0" y="846.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="523.0" y="812.6"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_4" id="Yaoqiang-_4">
+        <di:waypoint x="496.0" y="536.6337328582225"/>
+        <di:waypoint x="717.0" y="547.0"/>
+        <di:waypoint x="673.0" y="536.6337328582225"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="581.5" y="527.23"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_47" id="Yaoqiang-_47">
+        <di:waypoint x="454.5054021817583" y="267.0"/>
+        <di:waypoint x="454.5054021817583" y="310.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="451.51" y="279.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_46" id="Yaoqiang-_46">
+        <di:waypoint x="457.5" y="1116.0"/>
+        <di:waypoint x="457.5" y="1145.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="454.5" y="1121.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_2" id="Yaoqiang-_2">
+        <di:waypoint x="453.9515938372009" y="466.0"/>
+        <di:waypoint x="453.9515938372009" y="509.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="450.95" y="478.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_44" id="Yaoqiang-_44">
+        <di:waypoint x="498.0" y="873.5"/>
+        <di:waypoint x="526.0" y="873.5"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="509.0" y="864.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_43" id="Yaoqiang-_43">
+        <di:waypoint x="570.0" y="1008.0"/>
+        <di:waypoint x="570.0" y="975.0"/>
+        <di:waypoint x="691.0" y="975.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="611.0" y="965.6"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_11" id="Yaoqiang-_11">
+        <di:waypoint x="455.60690789473676" y="175.0"/>
+        <di:waypoint x="455.60690789473676" y="212.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="452.61" y="184.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_42" id="Yaoqiang-_42">
+        <di:waypoint x="823.0" y="1047.0"/>
+        <di:waypoint x="626.0" y="1047.0"/>
+        <di:waypoint x="610.0" y="1047.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="713.5" y="1037.6"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_10" id="Yaoqiang-_10">
+        <di:waypoint x="373.0" y="148.0"/>
+        <di:waypoint x="414.0" y="147.5"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="390.3" y="138.15"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_40" id="Yaoqiang-_40">
+        <di:waypoint x="843.0" y="1069.0"/>
+        <di:waypoint x="843.0" y="1097.0"/>
+        <di:waypoint x="500.0" y="1097.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="169.0" x="581.0" y="1098.6"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_37" id="Yaoqiang-_37">
+        <di:waypoint x="842.0" y="1008.0"/>
+        <di:waypoint x="842.0" y="1028.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="839.0" y="1008.6"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_36" id="Yaoqiang-_36">
+        <di:waypoint x="544.0" y="906.0"/>
+        <di:waypoint x="544.0" y="937.0"/>
+        <di:waypoint x="498.0" y="937.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="533.5" y="927.6"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_34" id="Yaoqiang-_34">
+        <di:waypoint x="695.3837328582225" y="710.3837328582225"/>
+        <di:waypoint x="376.0" y="576.0"/>
+        <di:waypoint x="413.0" y="629.5"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="473.75" y="700.98"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_33" id="Yaoqiang-_33">
+        <di:waypoint x="716.0" y="657.0"/>
+        <di:waypoint x="716.0" y="689.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="713.0" y="663.6"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_60" id="Yaoqiang-_60">
+        <di:waypoint x="714.5260445672916" y="561.0"/>
+        <di:waypoint x="714.5260445672916" y="602.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="18.8" width="6.0" x="711.53" y="572.1"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
