@@ -1,5 +1,3 @@
-import axios from "axios";
-
 // get user from localstorage if present
 const user = JSON.parse(localStorage.getItem("user"));
 const rol_id = user ? user.rol_id : null;
@@ -32,9 +30,11 @@ const mutations = {
 
 const actions = {
   fetchMenuItems({ commit }) {
-    return axios.get("/api/menu").then((response) => {
-      commit("setMenuItems", response.data);
-    });
+    fetch("/api/menu")
+      .then(response => response.json())
+      .then(data => {
+        commit("setMenuItems", data);
+      });
   },
 };
 

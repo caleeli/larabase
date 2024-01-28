@@ -1,9 +1,11 @@
 
 export default class Resource {
     static index(array, url, params) {
-        axios.get(url, {params: params}).then(response => {
-            array.splice(0, array.length, ...response.data.data);
-        });
+        fetch(`${url}?${new URLSearchParams(params)}`)
+            .then(response => response.json())
+            .then(data => {
+                array.splice(0, array.length, ...data.data);
+            });
         return array;
     }
 }
