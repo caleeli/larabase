@@ -1,7 +1,8 @@
 {
     "name": "caleeli/larabase",
     "type": "project",
-    "description": "The Laravel Framework Base.",
+    "description": "The Laravel Framework Base + Bootstrap-vue.",
+    "version": "1.0.1",
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "require": {
