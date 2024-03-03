@@ -32,59 +32,61 @@
       </template>
     </template>
     <template #default>
-      <template v-for="item in sidebarItems">
-        <Menu
-          :item="item"
-          :sidebarCollapsed="sidebarCollapsed"
-          @handleMenu="handleMenu"
-        />
-      </template>
+      <Menu
+        v-for="subItem in sidebarItems"
+        :key="`menu-${subItem.title}`"
+        :item="subItem"
+        :sidebarCollapsed="sidebarCollapsed"
+        @handleMenu="handleMenu"
+      />
     </template>
   </b-sidebar>
 </template>
 
 <script>
-import { mapActions } from "vuex";
-import Menu from "./Menu.vue";
+import { mapActions } from 'vuex';
+import Menu from './Menu.vue';
 
 export default {
-    data() {
-        return {
-            sidebarTitle: "App",
-            showModal: false,
-            sidebarCollapsed: false,
-        };
+  data() {
+    return {
+      sidebarTitle: 'App',
+      showModal: false,
+      sidebarCollapsed: false,
+    };
+  },
+  computed: {
+    currentPage() {
+      return this.$route.path;
     },
-    computed: {
-        currentPage() {
-            return this.$route.path;
-        },
-        sidebarItems() {
-            return this.$store.getters.getMenuItems;
-        },
+    sidebarItems() {
+      return this.$store.getters.getMenuItems;
     },
-    methods: {
-        ...mapActions(["workflow/startProcess"]),
-        isCurrentPage(item) {
-            const currentItem = this.sidebarItems.find((item) => item.page === this.$route.path.substring(0, item.page.length));
-            return currentItem === item;
-        },
-        handleMenu(item) {
-            if (item.process) {
-                this.startProcess({ processId: item.process, data: {} });
-            }
-            else if (item.page && item.page !== this.$route.path) {
-                this.$router.push(item.page);
-            }
-        },
-        toggle() {
-            this.sidebarCollapsed = !this.sidebarCollapsed;
-        },
-        onSidebarCollapsed(collapsed) {
-            this.sidebarCollapsed = collapsed;
-        },
+  },
+  methods: {
+    ...mapActions(['workflow/startProcess']),
+    isCurrentPage(checkItem) {
+      const currentItem = this.sidebarItems.find(
+        (item) => item.page === this.$route.path.substring(0, item.page.length),
+      );
+      return currentItem === checkItem;
     },
-    components: { Menu }
+    handleMenu(item) {
+      if (item.process) {
+        this.startProcess({ processId: item.process, data: {} });
+      } else if (item.page && item.page !== this.$route.path) {
+        this.$router.push(item.page);
+      }
+    },
+    toggle() {
+      this.sidebarCollapsed = !this.sidebarCollapsed;
+    },
+    onSidebarCollapsed(collapsed) {
+      this.sidebarCollapsed = collapsed;
+    },
+  },
+  // eslint-disable-next-line vue/no-reserved-component-names
+  components: { Menu },
 };
 </script>
 

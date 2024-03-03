@@ -1,12 +1,12 @@
-import "./bootstrap";
-import Vue from "vue";
+import './bootstrap';
+import Vue from 'vue';
 
-import Login from "./components/Login.vue";
+import Login from './components/Login.vue';
 
-new Vue({
+export default new Vue({
   el: '#app',
   components: {
     Login,
   },
-  template: '<Login />',  
+  template: '<Login />',
 });

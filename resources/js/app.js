@@ -1,43 +1,45 @@
-import "./bootstrap";
-import Layout from "./components/Layout.vue";
-import BButtons from "./components/BButtons.vue";
-import SearchInput from "./components/SearchInput.vue";
-import Upload from "./components/Upload.vue";
-import UploadButton from "./components/UploadButton.vue";
-import Pagination from "./components/Pagination.vue";
-import router from "./router";
-import store from "./store";
-import Vue from "vue";
-import ApiService from "./lib/ApiService";
-import FormSelect from "./components/FormSelect.vue";
-//import Reporte from "./components/Reporte.vue";
-import Workflow from "./lib/Workflow";
-import { mapState } from "vuex";
+import './bootstrap';
+import Vue from 'vue';
+import { mapState } from 'vuex';
+import Layout from './components/Layout.vue';
+import BFormButtons from './components/BFormButtons.vue';
+import SearchInput from './components/SearchInput.vue';
+import Upload from './components/Upload.vue';
+import UploadButton from './components/UploadButton.vue';
+import Pagination from './components/Pagination.vue';
+import router from './router';
+import store from './store';
+import ApiService from './lib/ApiService';
+import FormSelect from './components/FormSelect.vue';
+import Workflow from './lib/Workflow';
 
-Vue.prototype.$api = new ApiService;
-Vue.component("b-buttons", BButtons);
-Vue.component("search-input", SearchInput);
-Vue.component("b-form-file", Upload);
-Vue.component("b-button-upload", UploadButton);
-Vue.component("pagination", Pagination);
-Vue.component("b-form-select", FormSelect);
-//Vue.component("b-report", Reporte);
+Vue.prototype.$api = new ApiService();
+Vue.component('b-form-buttons', BFormButtons);
+Vue.component('search-input', SearchInput);
+Vue.component('b-form-file', Upload);
+Vue.component('b-button-upload', UploadButton);
+Vue.component('b-pagination', Pagination);
+Vue.component('b-form-select', FormSelect);
 
 window.app = new Vue({
   router,
   store,
-  el: "#app",
+  el: '#app',
   components: {
     Layout,
   },
-  template: "<Layout />",
+  template: '<Layout />',
 });
 
 Vue.prototype.$workflow = new Workflow(window.app);
-Vue.prototype.dateFormat = function (datetimeString) {
+Vue.prototype.dateFormat = (datetimeString) => {
   // convert a datetime string like "2023-07-15T01:35:54.000000Z" to a date string
   // like "15/07/2023"
   const datetime = new Date(datetimeString);
+  // Fix local time zone
+  if (datetimeString.indexOf('T') === -1) {
+    datetime.setMinutes(datetime.getMinutes() + datetime.getTimezoneOffset());
+  }
   const day = datetime.getDate();
   const month = datetime.getMonth() + 1;
   const year = datetime.getFullYear();
@@ -48,7 +50,7 @@ Vue.prototype.dateFormat = function (datetimeString) {
 
   return `${formattedDay}/${formattedMonth}/${year}`;
 };
-Vue.prototype.dateTimeFormat = function (datetimeString) {
+Vue.prototype.dateTimeFormat = (datetimeString) => {
   // convert a datetime string like "2023-07-15T01:35:54.000000Z" to a date string
   // like "15/07/2023 01:35:54"
   const datetime = new Date(datetimeString);
@@ -72,19 +74,21 @@ Vue.prototype.mixins = [
   {
     computed: {
       ...mapState({
-        'user': (state) => state.user,
+        user: (state) => state.user,
       }),
-    }
-  }
+    },
+  },
 ];
 
-window.alert = function (message, variant = "info") {
+window.alertMsg = (message, variant = 'info') => {
   // first line is the title
-  const title = variant === "danger" ? "Error" : "Información";
+  const title = variant === 'danger' ? 'Error' : 'Información';
   window.app.$bvToast.toast(message, {
     title,
     variant,
     solid: true,
     autoHideDelay: 5000,
   });
-}
+};
+
+window.alert = window.alertMsg;

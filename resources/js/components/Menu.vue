@@ -1,14 +1,15 @@
 <template>
   <div>
-    <div
+    <a
       :key="item.title"
       :class="`d-flex align-items-center sidebar-item ${
         sidebarCollapsed ? 'collapsed' : ''
       } ${isCurrentPage(item) ? 'active' : ''}
       ${isSelectedParent(item) ? 'inside' : ''}`"
-      @click="handleThisMenu(item)"
       aria-type="button"
       :aria-label="`menu-${item.title}`"
+      :href="item.page ? `#${item.page}` : ''"
+      @click="handleThisMenu(item)"
     >
       <i :class="`fas fa-${item.icon}`" class="mr-2"></i>
       <span v-show="!sidebarCollapsed">{{ item.title }}</span>
@@ -18,23 +19,24 @@
           class="ml-auto"
         />
       </template>
-    </div>
+    </a>
     <div v-if="item.items && open" class="sidebar-items">
-      <template v-for="item in item.items">
-        <Menu
-          :item="item"
-          :sidebarCollapsed="sidebarCollapsed"
-          @handleMenu="handleMenu"
-        />
-      </template>
+      <Menu
+        v-for="subItem in subItem.items"
+        :key="`menu-${subItem.title}`"
+        :item="subItem"
+        :sidebarCollapsed="sidebarCollapsed"
+        @handleMenu="handleMenu"
+      />
     </div>
   </div>
 </template>
 <script>
-import { mapState } from "vuex";
+import { mapState } from 'vuex';
 
 export default {
-  name: "Menu",
+  // eslint-disable-next-line vue/multi-word-component-names, vue/no-reserved-component-names
+  name: 'Menu',
   props: {
     item: {
       type: Object,
@@ -56,14 +58,14 @@ export default {
     }),
     currentItem() {
       return this.flatMenuItems(this.menuItems).filter(
-        (item) =>
-          item.page &&
-          item.page === this.$route.path.substring(0, item.page.length)
+        (item) => item.page
+          && item.page === this.$route.path.substring(0, item.page.length),
       ).pop();
-    }
+    },
   },
   components: {
-    Menu: () => import("./Menu.vue"),
+    // eslint-disable-next-line vue/no-reserved-component-names, import/no-self-import
+    Menu: () => import('./Menu.vue'),
   },
   methods: {
     flatMenuItems(menuItems) {
@@ -80,17 +82,17 @@ export default {
       return this.currentItem === item;
     },
     isSelectedParent(item) {
-      return item.items && item.items.includes(this.currentItem);
+      return item.items?.includes(this.currentItem);
     },
     handleThisMenu(item) {
       if (item.items) {
         this.open = !this.open;
         return;
       }
-      this.$emit("handleMenu", item);
+      this.$emit('handleMenu', item);
     },
     handleMenu(item) {
-      this.$emit("handleMenu", item);
+      this.$emit('handleMenu', item);
     },
   },
 };
@@ -110,8 +112,6 @@ export default {
 }
 .sidebar-item.active {
   color: white;
-}
-.sidebar-item.active {
   background-color: #1572e8;
   opacity: 1;
   box-shadow: 4px 4px 10px 0 rgb(0 0 0 / 10%),

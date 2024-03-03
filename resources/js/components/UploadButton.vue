@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-deprecated-dollar-listeners-api -->
 <template>
   <div class="upload-region" @click="click">
     <b-button v-bind="$attrs" v-on="$listeners">
@@ -21,12 +22,12 @@ export default {
     value: null,
     accept: {
       type: String,
-      default: "",
+      default: '',
     },
     multiplefile: Boolean,
     url: {
       type: String,
-      default: "/api/upload_file",
+      default: '/api/upload_file',
     },
   },
   computed: {
@@ -39,61 +40,61 @@ export default {
   data() {
     return {
       progress: 100,
-      name: "",
+      name: '',
     };
   },
   methods: {
     click(event) {
-      this.$emit("click", event);
+      this.$emit('click', event);
     },
-    changeFile: function (event, multiple) {
-      var self = this;
-      var data = new FormData();
-      for (var i = 0, l = event.target.files.length; i < l; i++) {
-        data.append("file" + (multiple ? "[]" : ""), event.target.files[i]);
+    changeFile(event, multiple) {
+      const data = new FormData();
+      // eslint-disable-next-line no-plusplus
+      for (let i = 0, l = event.target.files.length; i < l; i++) {
+        data.append(`file${multiple ? '[]' : ''}`, event.target.files[i]);
       }
       this.progress = 0;
-      const url =
-        this.url +
-        (this.accept
-          ? (this.url.indexOf("?") === -1 ? "?" : "&") +
-            "accept=" +
-            encodeURIComponent(this.accept)
-          : "");
+      const separator = this.url.indexOf('?') === -1 ? '?' : '&';
+      const url = this.url + (
+        this.accept
+          ? `${separator}accept=${encodeURIComponent(this.accept)}`
+          : ''
+      );
 
       // meta[name="csrf-token"]
       const token = document.head.querySelector('meta[name="csrf-token"]').content;
       fetch(url, {
-        method: "POST",
+        method: 'POST',
         body: data,
         headers: {
-          Accept: "application/json",
+          Accept: 'application/json',
           'X-CSRF-TOKEN': token,
         },
       })
         .then((response) => {
           if (!response.ok) {
-            throw new Error("Network response was not ok");
+            throw new Error('Network response was not ok');
           }
           return response.json();
         })
         .then((json) => {
           this.name = json.name;
-          this.$emit("input", json);
-          this.$emit("change", json);
+          this.$emit('input', json);
+          this.$emit('change', json);
           this.progress = 100;
         })
         .catch((error) => {
           this.progress = 100;
-          this.$emit("error", error);
+          this.$emit('error', error);
         });
       // clear input file value
-      event.target.value = "";
+      // eslint-disable-next-line no-param-reassign
+      event.target.value = '';
     },
   },
   watch: {
     value() {
-      this.name = this.value?.name || "";
+      this.name = this.value?.name || '';
     },
   },
 };
@@ -127,6 +128,6 @@ export default {
   cursor: pointer;
 }
 .form-file-progress input::-webkit-file-upload-button {
-    cursor: pointer; 
+    cursor: pointer;
 }
 </style>

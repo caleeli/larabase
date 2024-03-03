@@ -1,7 +1,8 @@
+/* eslint-disable no-param-reassign */
 const headers = {
   'Content-Type': 'application/json',
-  'Accept': 'application/json',
-  'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf-token"]').content
+  Accept: 'application/json',
+  'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf-token"]').content,
 };
 export default {
   namespaced: true,
@@ -20,9 +21,7 @@ export default {
       state.tokenId = null;
       state.data = newState.data;
       state.home = newState.home;
-      const myFirstToken = newState.tokens.find((token) => {
-        return token.status === 'ACTIVE' && token.user === user.id || token.user instanceof Array && token.user.includes(user.id);
-      });
+      const myFirstToken = newState.tokens.find((token) => token.status === 'ACTIVE' && (token.user === user.id || (token.user instanceof Array && token.user.includes(user.id))));
       if (!myFirstToken) {
         // go to default page of the process
         if (state.home) {
@@ -33,7 +32,10 @@ export default {
           } else if (newState.instance) {
             query.instance = String(newState.instance);
           }
-          if (window.app.$route.path !== state.home || JSON.stringify(query) !== JSON.stringify(window.app.$route.query)) {
+          if (
+            window.app.$route.path !== state.home
+            || JSON.stringify(query) !== JSON.stringify(window.app.$route.query)
+          ) {
             window.app.$router.replace({
               path: state.home,
               query,
@@ -41,12 +43,12 @@ export default {
             if (newState.tokens[0]) {
               const performer = newState.tokens[0].user;
               if (performer instanceof Array) {
-                alert(`El proyecto se encuentra en ${newState.tokens[0].name}`, 'success');
+                window.alertMsg(`El proyecto se encuentra en ${newState.tokens[0].name}`, 'success');
               } else {
-                fetch('/api/data/usuario/' + newState.tokens[0].user, { headers })
-                  .then(response => response.json())
-                  .then(user => {
-                    alert(`El proyecto se encuentra en ${newState.tokens[0].name} por ${user.nombres_apellidos}.`, 'success');
+                fetch(`/api/data/usuario/${newState.tokens[0].user}`, { headers })
+                  .then((response) => response.json())
+                  .then((userData) => {
+                    window.alertMsg(`El proyecto se encuentra en ${newState.tokens[0].name} por ${userData.nombres_apellidos}.`, 'success');
                   });
               }
             }
@@ -59,22 +61,26 @@ export default {
       if (!options || options.route) {
         state.page = page;
         // get absolute path of current page or relative path (last part of the path)
-        const currentPage = page.substring(0, 1) === "/" ? window.app.$route.path : window.app.$route.path.split("/").pop();
-        if (currentPage !== page || window.app.$route.query.instance !== newState.instance || window.app.$route.query.token !== myFirstToken.id) {
+        const currentPage = page.substring(0, 1) === '/' ? window.app.$route.path : window.app.$route.path.split('/').pop();
+        if (
+          currentPage !== page
+          || window.app.$route.query.instance !== newState.instance
+          || window.app.$route.query.token !== myFirstToken.id
+        ) {
           let path = page;
-          if (page.substring(0, 1) !== "/") {
-            const [, ...currentRoute] = window.location.hash.split("/");
-            const parentPath = currentRoute.slice(0, -1).join("/");
-            path = "/" + parentPath + "/" + page;
+          if (page.substring(0, 1) !== '/') {
+            const [, ...currentRoute] = window.location.hash.split('/');
+            const parentPath = currentRoute.slice(0, -1).join('/');
+            path = `/${parentPath}/${page}`;
           }
           window.app.$router.replace({
             path,
             query: {
               instance: newState.instance,
-              token: myFirstToken.id
-            }
-          }).catch(err => {
-            if (err.message && err.message.indexOf("Navigation cancelled") > -1) {
+              token: myFirstToken.id,
+            },
+          }).catch((err) => {
+            if (err.message && err.message.indexOf('Navigation cancelled') > -1) {
               // ignore the error
             } else {
               throw err;
@@ -85,32 +91,33 @@ export default {
     },
     setData(state, { data }) {
       Object.assign(state.data, data);
-    }
+    },
   },
   actions: {
     initializeData({ commit }, data) {
       commit('setData', { data });
     },
     async routeInstance({ commit, rootState }, { instance, from, to }) {
-      console.log("route instance", from, to);
-      const user = rootState.user.user;
+      const { user } = rootState.user;
       const params = new URLSearchParams({ from, to }).toString();
       const response = await fetch(`/api/route/${instance}?${params}`);
       const newState = await response.json();
       if (!newState) {
-        alert("No se pudo abrir el proceso");
+        window.alertMsg('No se pudo abrir el proceso');
       }
       commit('setState', { newState, user });
     },
-    async openStartInstance({ commit, rootState }, { instanceId, processId, startEvent, data }) {
-      const user = rootState.user.user;
+    async openStartInstance({ commit, rootState }, {
+      instanceId, processId, startEvent, data,
+    }) {
+      const { user } = rootState.user;
       const url = `/api/open-start/${processId}/${instanceId}/${startEvent}`;
       let response;
       if (data) {
         response = await fetch(url, {
           method: 'POST',
           headers,
-          body: JSON.stringify(data)
+          body: JSON.stringify(data),
         });
       } else {
         response = await fetch(url, {
@@ -120,113 +127,114 @@ export default {
       }
       const newState = await response.json();
       if (!newState) {
-        alert("No se pudo abrir el proceso");
+        window.alertMsg('No se pudo abrir el proceso');
       }
       commit('setState', { newState, user });
     },
     async openInstance({ commit, rootState }, instanceId) {
-      const user = rootState.user.user;
+      const { user } = rootState.user;
       const response = await fetch(`/api/open/${instanceId}`);
       const newState = await response.json();
       if (!newState) {
-        alert("No se pudo abrir el proceso");
+        window.alertMsg('No se pudo abrir el proceso');
       }
       commit('setState', { newState, user });
     },
     async openRecord({ commit, rootState }, recordId) {
-      console.log("entro", recordId);
-      const user = rootState.user.user;
+      const { user } = rootState.user;
       const response = await fetch(`/api/open-record/${recordId}`);
       const newState = await response.json();
       if (!newState) {
-        alert("No se pudo abrir el proceso");
+        window.alertMsg('No se pudo abrir el proceso');
       }
       commit('setState', { newState, user, options: { route: false } });
     },
     async callProcess({ commit, rootState }, { processId, data }) {
-      const user = rootState.user.user;
+      const { user } = rootState.user;
       let response;
       if (data) {
         response = await fetch(`/api/call/${processId}`, {
           method: 'POST',
           headers,
-          body: JSON.stringify(data)
+          body: JSON.stringify(data),
         });
       } else {
         response = await fetch(`/api/call/${processId}`);
       }
       const newState = await response.json();
       if (!newState) {
-        alert("No se pudo iniciar el proceso");
+        window.alertMsg('No se pudo iniciar el proceso');
       }
       commit('setState', { newState, user });
     },
     async startProcess({ commit, rootState }, { processId, startEvent, data }) {
-      const user = rootState.user.user;
+      const { user } = rootState.user;
       let response;
       if (data) {
         response = await fetch(`/api/start/${processId}/${startEvent}`, {
           method: 'POST',
           headers,
-          body: JSON.stringify(data)
+          body: JSON.stringify(data),
         });
       } else {
         response = await fetch(`/api/start/${processId}/${startEvent}`);
       }
       const newState = await response.json();
       if (!newState) {
-        alert("No se pudo iniciar el proceso");
+        window.alertMsg('No se pudo iniciar el proceso');
       }
       commit('setState', { newState, user });
     },
     async workflowMessage({ state, commit, rootState }, { messageRef, tokenId }) {
-      const user = rootState.user.user;
+      const { user } = rootState.user;
       const response = await fetch(`/api/message/${state.instanceId}/${tokenId || state.tokenId}/${messageRef}`);
       const newState = await response.json();
       if (!newState) {
-        alert("No se pudo enviar el mensaje");
+        window.alertMsg('No se pudo enviar el mensaje');
       }
       commit('setState', { newState, user });
     },
     async completeTask({ state, commit, rootState }, { instanceId, tokenId, data }) {
-      const user = rootState.user.user;
+      const { user } = rootState.user;
       // post complete
       const url = `/api/complete/${instanceId || state.instanceId}/${tokenId || state.tokenId}`;
       const response = await fetch(url, {
         method: 'POST',
         headers,
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
       const newState = await response.json();
       if (!newState) {
-        alert("No se pudo completar la tarea");
+        window.alertMsg('No se pudo completar la tarea');
         return;
-      } else if (newState.exception) {
-        alert(newState.message, "danger");
+      } if (newState.exception) {
+        window.alertMsg(newState.message, 'danger');
         return;
-      } else if (newState.error) {
-        alert(newState.error, "danger");
+      } if (newState.error) {
+        window.alertMsg(newState.error, 'danger');
       }
       commit('setState', { newState, user });
     },
     async updateTask({ state, commit, rootState }, { instanceId, tokenId, data }) {
-      const user = rootState.user.user;
+      const { user } = rootState.user;
       // post complete
       const url = `/api/update/${instanceId || state.instanceId}/${tokenId || state.tokenId}`;
       const response = await fetch(url, {
         method: 'POST',
         headers,
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
       const newState = await response.json();
       if (!newState) {
-        alert("No se pudo actualizar la tarea");
+        window.alertMsg('No se pudo actualizar la tarea');
         return;
-      } else if (newState.exception) {
-        alert(newState.message, "danger");
+      }
+      if (newState.exception) {
+        window.alertMsg(newState.message, 'danger');
         return;
-      } else if (newState.error) {
-        alert(newState.error, "danger");
+      }
+      if (newState.error) {
+        window.alertMsg(newState.error, 'danger');
       }
       commit('setState', { newState, user });
     },

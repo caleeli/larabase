@@ -1,17 +1,25 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div class="upload-region" @click="click">
     <b-input-group>
-      <b-form-input :placeholder="placeholder" v-model="name" readonly />
+      <b-form-input
+        :placeholder="placeholder"
+        v-model="name"
+        readonly
+        :class="disabled ? '' : 'bg-white'"
+      />
       <b-input-group-append>
-        <b-button size="sm" variant="secondary" disabled>
+        <b-button size="sm" variant="primary" :disabled="disabled">
           <i :class="`fas ${capture ? 'fa-camera' : 'fa-file'}`"></i>
         </b-button>
       </b-input-group-append>
     </b-input-group>
     <div class="form-file-progress">
       <input
+        :id="id"
         type="file"
         v-on:change="changeFile($event, multiplefile)"
+        v-bind:disabled="disabled"
         v-bind:accept="accept"
         v-bind:multiple="multiplefile"
         v-bind:capture="capture"
@@ -27,18 +35,26 @@ export default {
     value: null,
     accept: {
       type: String,
-      default: "",
+      default: '',
     },
     multiplefile: Boolean,
     url: {
       type: String,
-      default: "/api/upload_file",
+      default: '/api/upload_file',
     },
     placeholder: {
       type: String,
-      default: "",
+      default: '',
     },
     capture: {
+      type: Boolean,
+      default: false,
+    },
+    id: {
+      type: String,
+      default: '',
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },
@@ -53,65 +69,65 @@ export default {
   data() {
     return {
       progress: 100,
-      name: "",
+      name: '',
     };
   },
   methods: {
     click(event) {
-      this.$emit("click", event);
+      this.$emit('click', event);
     },
-    changeFile: function (event, multiple) {
-      var self = this;
-      var data = new FormData();
-      for (var i = 0, l = event.target.files.length; i < l; i++) {
-        data.append("file" + (multiple ? "[]" : ""), event.target.files[i]);
+    changeFile(event, multiple) {
+      const data = new FormData();
+      // eslint-disable-next-line no-plusplus
+      for (let i = 0, l = event.target.files.length; i < l; i++) {
+        data.append(`file${multiple ? '[]' : ''}`, event.target.files[i]);
       }
       this.progress = 0;
-      const url =
-        this.url +
-        (this.accept
-          ? (this.url.indexOf("?") === -1 ? "?" : "&") +
-            "accept=" +
-            encodeURIComponent(this.accept)
-          : "");
+      const separator = this.url.indexOf('?') === -1 ? '?' : '&';
+      const url = this.url + (
+        this.accept
+          ? `${separator}accept=${encodeURIComponent(this.accept)}`
+          : ''
+      );
 
       // meta[name="csrf-token"]
       const token = document.head.querySelector('meta[name="csrf-token"]').content;
       fetch(url, {
-        method: "POST",
+        method: 'POST',
         body: data,
         headers: {
-          Accept: "application/json",
+          Accept: 'application/json',
           'X-CSRF-TOKEN': token,
         },
       })
         .then((response) => {
           if (!response.ok) {
-            throw new Error("Network response was not ok");
+            throw new Error('Network response was not ok');
           }
           return response.json();
         })
         .then((json) => {
           this.name = json.name;
-          this.$emit("input", json, this);
-          this.$emit("change", json, this);
+          this.$emit('input', json, this);
+          this.$emit('change', json, this);
           this.progress = 100;
         })
         .catch((error) => {
           this.progress = 100;
-          this.$emit("error", error);
+          this.$emit('error', error);
         });
       // clear input file value
-      event.target.value = "";
+      // eslint-disable-next-line no-param-reassign
+      event.target.value = '';
     },
     clear() {
-      this.name = "";
-      this.$emit("input", null, this);
+      this.name = '';
+      this.$emit('input', null, this);
     },
   },
   watch: {
     value() {
-      this.name = this.value?.name || "";
+      this.name = this.value?.name || '';
     },
   },
 };

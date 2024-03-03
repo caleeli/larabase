@@ -1,10 +1,4 @@
-<!--
-Una pantalla bootrstrap-vue de ingreso al sistema:
-- titulo en h3 centrado
-- formulario con 2 inputs (username y password) con estilo ".input-border-bottom"
-- Recuerdame con estilo ".custom-checkbox", una enlace "olvidaste tu contraseña" con estilo ".text-muted"
-- boton de ingresar redondeado con estilo ".btn-login"
--->
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div class="login">
     <div class="container container-login animated fadeIn">
@@ -63,8 +57,8 @@ Una pantalla bootrstrap-vue de ingreso al sistema:
 export default {
   data() {
     return {
-      username: "",
-      password: "",
+      username: '',
+      password: '',
       remember: false,
       isSubmitting: false,
       csrfToken: document.querySelector('meta[name="csrf-token"]').content,
@@ -74,22 +68,22 @@ export default {
     async onSubmit() {
       // Validar los campos
       if (!this.username || !this.password) {
-        this.$bvModal.msgBoxOk("Ingresa tu nombre de usuario y contraseña.", {
-          title: "Error",
-          size: "sm",
-          buttonSize: "sm",
-          okVariant: "danger",
-          okTitle: "OK",
+        this.$bvModal.msgBoxOk('Ingresa tu nombre de usuario y contraseña.', {
+          title: 'Error',
+          size: 'sm',
+          buttonSize: 'sm',
+          okVariant: 'danger',
+          okTitle: 'OK',
           centered: true,
         });
         return;
       }
       try {
-        const response = await fetch("/login", {
-          method: "POST",
+        const response = await fetch('/login', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": this.csrfToken,
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': this.csrfToken,
           },
           body: JSON.stringify({
             username: this.username,
@@ -98,8 +92,8 @@ export default {
         });
         if (response.ok) {
           const data = await response.json();
-          localStorage.setItem("user", JSON.stringify(data.user));
-          window.location.href = "/main#/HelloWorld";
+          localStorage.setItem('user', JSON.stringify(data.user));
+          window.location.href = '/main#/Inicio';
         } else if (response.status === 419) {
           // CSRF token mismatch
           window.location.reload();
@@ -109,15 +103,15 @@ export default {
         }
       } catch (error) {
         this.$alert(
-          "Inicio de sesión fallido",
-          error.message || "Error al iniciar sesión. Por favor, intenta de nuevo.",
-          { variant: "danger" }
+          'Inicio de sesión fallido',
+          error.message || 'Error al iniciar sesión. Por favor, intenta de nuevo.',
+          { variant: 'danger' },
         );
       }
     },
     onForgotPassword() {
       this.$bvModal.msgBoxOk(
-        "Por favor contacta al administrador para recuperar tu contraseña."
+        'Por favor contacta al administrador para recuperar tu contraseña.',
       );
     },
   },
@@ -142,7 +136,7 @@ export default {
 }
 .login {
   background-color: #efefee;
-  background-image: url("https://storage.googleapis.com/pai-images/upscaled_image-060415fe-8b5a-4734-ba3e-3a773dad82f8.png");
+  background-image: url("../../assets/background.jpeg");
   background-size: cover;
   width: 100vw;
   height: 100vh;

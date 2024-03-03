@@ -1,12 +1,15 @@
-import get from "lodash/get";
+/* eslint-disable no-param-reassign */
+import get from 'lodash/get';
 
-export default function ({ module, name, perPage, include, filters, value, text, variable, url }) {
+export default ({
+  module, name, perPage, include, filters, value, text, url,
+}) => {
   if (!url) {
     url = () => `/api/data/${module}`;
   }
   let calcFilters;
-  let headers = {
-    'Accept': 'application/json',
+  const headers = {
+    Accept: 'application/json',
     'Content-Type': 'application/json',
   };
   if (filters instanceof Function) {
@@ -26,8 +29,8 @@ export default function ({ module, name, perPage, include, filters, value, text,
           per_page: perPage,
           to: 0,
           total: 0,
-          include: "",
-        }
+          include: '',
+        },
       };
     },
     computed: {
@@ -41,16 +44,13 @@ export default function ({ module, name, perPage, include, filters, value, text,
           return;
         }
         const params = JSON.parse(JSON.stringify(inParams));
-        if (variable) {
-          const currentValue = get(this, variable);
-        }
         const urlParams = new URLSearchParams();
         // prepare parameters
         if (params) {
           Object.keys(params).forEach((key) => {
             if (params[key] instanceof Array) {
               params[key].forEach((paramValue) => {
-                urlParams.append(key + "[]", paramValue);
+                urlParams.append(`${key}[]`, paramValue);
               });
             } else if (params[key] !== undefined && params[key] !== null) {
               urlParams.append(key, params[key]);
@@ -59,16 +59,16 @@ export default function ({ module, name, perPage, include, filters, value, text,
         }
         // restore missing params
         if (params.include === undefined && include) {
-          urlParams.append("include", include);
+          urlParams.append('include', include);
         }
         if (params.per_page === undefined) {
-          urlParams.append("per_page", this[name].per_page ?? 10);
+          urlParams.append('per_page', this[name].per_page ?? 10);
         }
         // store default params
         if (params.per_page) {
           this[name].per_page = params.per_page;
         }
-        let data = await fetch(urlBase + "?" + urlParams.toString());
+        let data = await fetch(`${urlBase}?${urlParams.toString()}`);
         data = await data.json();
         data.data.forEach((item) => {
           item.value = get(item, value);
@@ -80,41 +80,41 @@ export default function ({ module, name, perPage, include, filters, value, text,
         const filter = [];
         const filtersC = this[`filters${capName}`];
         if (filtersC) {
-          filtersC.forEach(({ where, params }) => {
-            const paramsValues = JSON.stringify(params);
+          filtersC.forEach(({ where, params: filterParams }) => {
+            const paramsValues = JSON.stringify(filterParams);
             filter.push(`${where}(${paramsValues.substring(1, paramsValues.length - 1)})`);
           });
         }
-        return this[`fetch${capName}`]({ page: page, filter, ...params });
+        return this[`fetch${capName}`]({ page, filter, ...params });
       },
-      [`refresh${capName}`](page, params = {}) {
+      [`refresh${capName}`]() {
         return this[`navigate${capName}`](1);
       },
       async [`create${capName}`](data) {
         const urlBase = this[`url${capName}`];
         if (!urlBase) {
-          return;
+          return null;
         }
         const response = await fetch(urlBase, {
           method: 'POST',
           body: JSON.stringify(data),
-          headers: headers,
+          headers,
         });
         if (!(response.status >= 200 && response.status < 300)) {
           const json = await response.json();
           throw new Error(json.error || response.statusText);
         }
-        let result = await response.json();
+        const result = await response.json();
         return result;
       },
       async [`delete${capName}`](id) {
         const urlBase = this[`url${capName}`];
         if (!urlBase) {
-          return;
+          return false;
         }
         const response = await fetch(`${urlBase}/${id}`, {
           method: 'DELETE',
-          headers: headers,
+          headers,
         });
         if (!(response.status >= 200 && response.status < 300)) {
           const json = await response.json();
@@ -135,8 +135,7 @@ export default function ({ module, name, perPage, include, filters, value, text,
       },
       [`filters${capName}`]() {
         this[`navigate${capName}`](1, {});
-      }
+      },
     },
   };
-}
-
+};

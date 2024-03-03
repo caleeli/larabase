@@ -34,9 +34,8 @@ export default {
   },
   methods: {
     navigate(page) {
-      this.$emit("input", this.search);
-      const capModule =
-        this.module.charAt(0).toUpperCase() + this.module.slice(1);
+      this.$emit('input', this.search);
+      const capModule = this.module.charAt(0).toUpperCase() + this.module.slice(1);
       this.$parent[`navigate${capModule}`](page);
     },
   },

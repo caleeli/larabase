@@ -1,13 +1,13 @@
 export default {
   methods: {
     $focusTabIndex(index) {
-      let el = document.querySelector(`[tabindex="${index}"]`);
+      const el = document.querySelector(`[tabindex="${index}"]`);
       if (el) {
         el.focus();
       }
     },
     $submit(data) {
-      this.$store.dispatch("workflow/completeTask", {
+      this.$store.dispatch('workflow/completeTask', {
         instanceId: this.$route.query.instance,
         tokenId: this.$route.query.token,
         data,
@@ -24,9 +24,9 @@ export default {
         autoHideDelay: 5000,
         solid: false,
         appendToast: true,
-        variant: "success",
+        variant: 'success',
         ...options,
       });
-    }
-  }
+    },
+  },
 };

@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div class="workspace">
     <span class="nav-container">
@@ -34,9 +35,10 @@
 
 <script>
 // Importa de pdfjs-dist
-import * as pdfjs from "pdfjs-dist";
-const getDocument = pdfjs.getDocument;
-pdfjs.GlobalWorkerOptions.workerSrc = "/pdf/pdf.worker.js"; // Ajusta la ruta según tu configuración
+import * as pdfjs from 'pdfjs-dist';
+
+const { getDocument } = pdfjs;
+pdfjs.GlobalWorkerOptions.workerSrc = '/pdf/pdf.worker.js'; // Ajusta la ruta según tu configuración
 
 export default {
   props: {
@@ -65,10 +67,10 @@ export default {
   },
   methods: {
     mousemove(e) {
-      this.$emit("mousemove", e);
+      this.$emit('mousemove', e);
     },
     mouseup(e) {
-      this.$emit("mouseup", e);
+      this.$emit('mouseup', e);
     },
     async loadPdf(src) {
       try {
@@ -77,7 +79,8 @@ export default {
         this.numPages = this.pdf.numPages;
         this.renderPage(Math.min(this.page, this.numPages));
       } catch (error) {
-        console.error("Error loading PDF: ", error);
+        // eslint-disable-next-line no-console
+        console.error('Error loading PDF: ', error);
       }
     },
     async renderPage(num) {
@@ -85,29 +88,30 @@ export default {
         const page = await this.pdf.getPage(num);
         const viewport = page.getViewport({ scale: 1.0 });
         const canvas = this.$refs.pdfCanvas;
-        const context = canvas.getContext("2d");
+        const context = canvas.getContext('2d');
         canvas.width = viewport.width;
         canvas.height = viewport.height;
 
         const renderContext = {
           canvasContext: context,
-          viewport: viewport,
+          viewport,
         };
         await page.render(renderContext);
       } catch (error) {
-        console.error("Error rendering page: ", error);
+        // eslint-disable-next-line no-console
+        console.error('Error rendering page: ', error);
       }
     },
     nextPage() {
       if (this.page < this.numPages) {
         this.renderPage(this.page + 1);
-        this.$emit("changepage", this.page + 1);
+        this.$emit('changepage', this.page + 1);
       }
     },
     prevPage() {
       if (this.page > 1) {
         this.renderPage(this.page - 1);
-        this.$emit("changepage", this.page - 1);
+        this.$emit('changepage', this.page - 1);
       }
     },
   },

@@ -1,7 +1,9 @@
-import get from "lodash/get";
-import { mapState, mapActions } from "vuex";
+import get from 'lodash/get';
+import { mapState, mapActions } from 'vuex';
 
-export default function ({ module, perPage, include, filters }) {
+export default ({
+  module, perPage, include, filters,
+}) => {
   const capModule = module.charAt(0).toUpperCase() + module.slice(1);
   return {
     data() {
@@ -17,14 +19,14 @@ export default function ({ module, perPage, include, filters }) {
       }),
     },
     methods: {
-      ...mapActions(module, { [`fetch${capModule}`]: "fetch" }),
+      ...mapActions(module, { [`fetch${capModule}`]: 'fetch' }),
       [`navigate${capModule}`](page, params = {}) {
         const filter = [];
         if (filters) {
-          filters.forEach(({ where, params }) => {
+          filters.forEach(({ where, params: filterParams }) => {
             const paramsValues = [];
             let valid = true;
-            params.forEach((param) => {
+            filterParams.forEach((param) => {
               const value = get(this, param);
               if (value) {
                 paramsValues.push(value);
@@ -37,7 +39,7 @@ export default function ({ module, perPage, include, filters }) {
             }
           });
         }
-        this[`fetch${capModule}`]({ page: page, filter, ...params });
+        this[`fetch${capModule}`]({ page, filter, ...params });
       },
     },
     created() {
@@ -47,5 +49,4 @@ export default function ({ module, perPage, include, filters }) {
       });
     },
   };
-}
-
+};

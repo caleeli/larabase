@@ -14,7 +14,7 @@
       target="notificaciones-bell"
       triggers="blur click"
       placement="bottomleft"
-      :show.sync="showNotificaciones"
+      v-model:show="showNotificaciones"
     >
       <template #title>Notificaciones</template>
       <b-list-group>
@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState } from 'vuex';
 
 export default {
   data() {
@@ -88,7 +88,7 @@ export default {
   computed: {
     ...mapState({
       user: (state) => state.user.user,
-      workflow: state => state.workflow,
+      workflow: (state) => state.workflow,
     }),
   },
   methods: {
@@ -99,7 +99,7 @@ export default {
       return this.$api.selectObject(
         `notificacion?include=creadoPor&filter[]=whereUsuarioId(${this.user.id})&filter[]=whereLeido(0)&sort=-id&per_page=6`,
         {},
-        { data: [], total: 0 }
+        { data: [], total: 0 },
       );
     },
     actualizarNotificaciones() {
@@ -114,7 +114,7 @@ export default {
     },
   },
   mounted() {
-    window.addEventListener("resize", () => {
+    window.addEventListener('resize', () => {
       this.isSmall = window.innerWidth < 992;
     });
     this.actualizarNotificaciones();

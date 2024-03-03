@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <b-pagination
     :total-rows="total"
@@ -31,12 +32,11 @@ export default {
   },
   methods: {
     toggleSidebar() {
-      this.$emit("toggle-sidebar");
+      this.$emit('toggle-sidebar');
     },
     navigate(page) {
-      const capModule =
-        this.module.charAt(0).toUpperCase() + this.module.slice(1);
-      this.$emit("input", page);
+      const capModule = this.module.charAt(0).toUpperCase() + this.module.slice(1);
+      this.$emit('input', page);
       this.$parent[`navigate${capModule}`](page);
     },
   },

@@ -14,11 +14,12 @@
       </template>
 
       <!-- Scoped Slots -->
-      <template v-for="(slot, name) in $scopedSlots" v-slot:[name]="slotProps">
+      <!-- eslint-disable-next-line vue/valid-v-slot -->
+      <template v-for="(slot, name) in $slots" v-slot:[name]="slotProps">
         <slot :name="name" v-bind="slotProps"></slot>
       </template>
     </BVFormSelect>
-    <!-- If multiple is defined, use b-form-checkbox-group instead with scroll, height based on attrs.size -->
+    <!-- If multiple is defined, use b-form-checkbox-group instead with scroll -->
     <b-form-checkbox-group
       v-else
       v-model="selected"
@@ -43,7 +44,8 @@
 </template>
 
 <script>
-import { BFormSelect } from "bootstrap-vue";
+import { BFormSelect } from 'bootstrap-vue';
+
 export default {
   components: {
     BVFormSelect: BFormSelect,
@@ -66,6 +68,7 @@ export default {
       return rest;
     },
     listeners() {
+      // eslint-disable-next-line vue/no-deprecated-dollar-listeners-api
       return this.$listeners;
     },
     allSelected() {
@@ -78,16 +81,13 @@ export default {
   methods: {
     selectOption() {
       // Emit the change event with the selected options
-      this.$emit("input", this.selected);
-      this.$emit("change", this.selected);
+      this.$emit('input', this.selected);
+      this.$emit('change', this.selected);
     },
     toggleAll() {
-      const valueField = this.attrs.valueField || "value";
-      console.log(valueField);
+      const valueField = this.attrs.valueField || 'value';
       if (!this.allSelected) {
-        this.selected = this.attrs.options.map((o) =>
-          typeof o === "object" ? o[valueField] : o
-        );
+        this.selected = this.attrs.options.map((o) => (typeof o === 'object' ? o[valueField] : o));
       } else {
         this.selected = [];
       }
@@ -95,7 +95,7 @@ export default {
     },
   },
   watch: {
-    "$attrs.value"() {
+    '$attrs.value': function updateSelectedValue() {
       if (this.$attrs.value && this.$attrs.value instanceof Array) {
         this.selected = this.$attrs.value;
       }
